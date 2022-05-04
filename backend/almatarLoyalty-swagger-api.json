@@ -1,0 +1,474 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"version": "1.0.0",
+		"title": "AlmatarLoyalty",
+		"description": "Simple web application that allows users to transfer their loyalty points to each other."
+	},
+	"tags": [
+		{
+			"name": "Users",
+			"description": "Users endpoints"
+		},
+		{
+			"name": "Users Protected",
+			"description": "Users protected endpoints for logged in users"
+		},
+		{
+			"name": "Transactions",
+			"description": "Transactions endpoints for logged in users"
+		}
+	],
+	"paths": {
+		"/users/signup": {
+			"post": {
+				"tags": ["Users"],
+				"summary": "Signup endpoint",
+				"operationId": "signup",
+				"requestBody": {
+					"description": "user signup data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/User"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "successful operation",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"type": "string",
+											"example": "success"
+										},
+										"statusCode": {
+											"type": "number",
+											"example": 201
+										},
+										"data": {
+											"type": "object",
+											"properties": {
+												"_id": {
+													"type": "string",
+													"example": "507f1f77bcf86cd799439011"
+												},
+												"name": {
+													"type": "string",
+													"example": "abdo"
+												},
+												"email": {
+													"type": "string",
+													"example": "abdo@example.com"
+												}
+											}
+										}
+									}
+								}
+							}
+						},
+						"headers": {
+							"Set-Cookie": {
+								"schema": {
+									"type": "string",
+									"example": "jwt=abcasfa33asfde12345; Path=/; HttpOnly"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad request. email:should be unique.password:should NOT have fewer than 8 characters.password:passwords are not the same"
+					},
+					"500": {
+						"description": "Error in sign up. Try again later."
+					}
+				}
+			}
+		},
+		"/users/login": {
+			"post": {
+				"tags": ["Users"],
+				"summary": "Login endpoint",
+				"operationId": "login",
+				"requestBody": {
+					"description": "User login data",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"email": {
+										"type": "string",
+										"example": "abdo@example.com"
+									},
+									"password": {
+										"type": "string",
+										"example": "abdo1_3passowrd"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"type": "string",
+											"example": "success"
+										},
+										"statusCode": {
+											"type": "number",
+											"example": 200
+										},
+										"data": {
+											"type": "object",
+											"properties": {
+												"_id": {
+													"type": "string",
+													"example": "507f1f77bcf86cd799439011"
+												},
+												"name": {
+													"type": "string",
+													"example": "abdo"
+												},
+												"email": {
+													"type": "string",
+													"example": "abdo@example.com"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Incorrect email or password. / Please provide email and password!"
+					},
+					"500": {
+						"description": "Error in login. Please log in again."
+					}
+				}
+			}
+		},
+		"/users/logout": {
+			"post": {
+				"tags": ["Users Protected"],
+				"summary": "Logout endpoint",
+				"operationId": "logout",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"type": "string",
+											"example": "success"
+										}
+									}
+								}
+							}
+						}
+					},
+					"401": {
+						"description": "Invalid token, Please log in again."
+					}
+				}
+			}
+		},
+		"/users/me": {
+			"get": {
+				"tags": ["Users Protected"],
+				"summary": "User profile endpoint",
+				"operationId": "me",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"type": "string",
+											"example": "success"
+										},
+										"statusCode": {
+											"type": "number",
+											"example": 200
+										},
+										"data": {
+											"type": "object",
+											"properties": {
+												"_id": {
+													"type": "string",
+													"example": "507f1f77bcf86cd799439011"
+												},
+												"name": {
+													"type": "string",
+													"example": "abdo"
+												},
+												"email": {
+													"type": "string",
+													"example": "abdo@example.com"
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/transactions/transfer": {
+			"post": {
+				"tags": ["Transactions"],
+				"summary": "Transactions transfer endpoint",
+				"operationId": "transactionsTransfer",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {
+					"description": "transaction info",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"points": {
+										"type": "number",
+										"example": 100
+									},
+									"email": {
+										"type": "string",
+										"example": "example@example.com"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"type": "string",
+											"example": "success"
+										},
+										"statusCode": {
+											"type": "number",
+											"example": 200
+										},
+										"message": {
+											"type": "string",
+											"example": "Transaction success, confirmation sent!"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "validation failed."
+					},
+					"500": {
+						"description": "There was an error sending the email. Try again later!"
+					}
+				}
+			}
+		},
+		"/transactions/confirm": {
+			"post": {
+				"tags": ["Transactions"],
+				"summary": "Transaction confirmation endpoint",
+				"operationId": "transactionsConfirmation",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"requestBody": {
+					"description": "transaction info",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Transaction"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"type": "string",
+											"example": "success"
+										},
+										"statusCode": {
+											"type": "number",
+											"example": 200
+										},
+										"message": {
+											"type": "string",
+											"example": "Transaction success, confirmation sent!"
+										}
+									}
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "validation failed."
+					},
+
+					"422": {
+						"description": "Transaction not valid."
+					},
+					"500": {
+						"description": "There was an error confirming transaction. Try again later!"
+					}
+				}
+			}
+		},
+		"/transactions/me": {
+			"get": {
+				"tags": ["Transactions"],
+				"summary": "Transactions for user endpoint",
+				"operationId": "transactionsByUser",
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "successful operation",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"status": {
+											"type": "string",
+											"example": "success"
+										},
+										"statusCode": {
+											"type": "number",
+											"example": 200
+										},
+										"data": {
+											"type": "object",
+											"$ref": "#/components/schemas/Transaction"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"User": {
+				"type": "object",
+				"properties": {
+					"email": {
+						"type": "string",
+						"example": "abdo@example.com"
+					},
+					"password": {
+						"type": "string",
+						"example": "abdo_passowrd"
+					},
+					"points": {
+						"type": "integer",
+						"example": 500
+					}
+				}
+			},
+			"Transaction": {
+				"type": "object",
+				"properties": {
+					"points": {
+						"type": "number",
+						"example": 100
+					},
+					"sender": {
+						"type": "string",
+						"example": "example@example.com"
+					},
+					"receiver": {
+						"type": "string",
+						"example": "example@example.com"
+					},
+					"transactionTime": {
+						"type": "string",
+						"format": "date",
+						"example": "2022-05-04T12:52:29.825Z"
+					},
+					"confirmationCode": {
+						"type": "integer",
+						"example": 34254
+					}
+				}
+			}
+		},
+		"securitySchemes": {
+			"bearerAuth": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			}
+		}
+	},
+	"servers": [
+		{
+			"description": "Try it Now",
+			"url": "http://localhost:3000/api/v1/"
+		}
+	]
+}
